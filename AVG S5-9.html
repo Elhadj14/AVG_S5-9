@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ENSER — Grade Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f5f7fa;
+  --surface: #ffffff;
+  --card: #ffffff;
+  --card2: #f9fafb;
+  --border: #e5e7eb;
+  --border2: #d1d5db;
+  --er: #077a7d; /* dark teal (palette) */
+  --er-light: #7ae2cf; /* mint */
+  --er-mid: #7ae2cf;
+  --gh: #fdeb9e; /* pale yellow */
+  --gh-light: #fff6db;
+  --gh-mid: #fdeeaa;
+  --text: #06202b; /* very dark */
+  --text2: #374151;
+  --muted: #9ca3af;
+  --muted2: #6b7280;
+  --success: #16a34a;
+  --success-bg: #dcfce7;
+  --warn: #d97706;
+  --warn-bg: #fef3c7;
+  --danger: #dc2626;
+  --danger-bg: #fee2e2;
+  --exam-color: #7c3aed;
+  --exam-bg: #ede9fe;
+  --cc-color: #0d9488;
+  --cc-bg: #ccfbf1;
+  --td-color: #ea580c;
+  --td-bg: #ffedd5;
+  --tp-color: #0284c7;
+  --tp-bg: #e0f2fe;
+  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* ── LANG BAR ── */
+.topbar {
+  background: linear-gradient(90deg,var(--er-light),var(--surface));
+  border-bottom: 1px solid var(--border);
+  padding: 0.45rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.topbar-left {
+  font-size: 0.68rem;
+  color: var(--muted2);
+  font-family: 'Space Mono', monospace;
+}
+.lang-group { display: flex; gap: 0.3rem; }
+.lang-btn {
+  padding: 0.22rem 0.65rem;
+  border-radius: 6px;
+  border: 1px solid var(--border2);
+  background: transparent;
+  color: var(--muted2);
+  cursor: pointer;
+  font-size: 0.68rem;
+  font-family: 'Space Mono', monospace;
+  transition: all 0.15s;
+  font-weight: 600;
+}
+.lang-btn:hover { background: var(--bg); color: var(--text); }
+.lang-btn.active { background: var(--text); color: #fff; border-color: var(--text); }
+
+/* ── HEADER ── */
+header {
+  background: var(--gh);
+  border-bottom: 1px solid var(--border);
+  padding: 1rem 1.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow);
+}
+.header-inner {
+  max-width: 1300px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.logo-wrap { display: flex; align-items: center; gap: 0.75rem; flex: 1; min-width: 0; }
+.logo-badge {
+  width: 40px; height: 40px;
+  background: white;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.58rem;
+  font-weight: 700;
+  color: var(--text);
+  flex-shrink: 0;
+  letter-spacing: -0.3px;
+  line-height: 1.2;
+  text-align: center;
+}
+.logo-text h1 { font-size: 0.95rem; font-weight: 700; color: var(--text); line-height: 1.2; }
+.logo-text p { font-size: 0.67rem; color: var(--muted2); margin-top: 0.08rem; }
+.header-tags { display: flex; gap: 0.4rem; flex-shrink: 0; }
+.htag {
+  padding: 0.22rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.67rem;
+  font-weight: 600;
+  border: 1.5px solid;
+}
+.htag-er { border-color: var(--er); color: var(--er); background: var(--er-light); }
+.htag-gh { border-color: var(--gh); color: var(--text); background: var(--gh); }
+
+/* ── LEGEND ── */
+.legend-bar {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 0.55rem 1.5rem;
+  display: flex;
+  gap: 1.2rem;
+  flex-wrap: wrap;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+.leg-label { font-size: 0.65rem; color: var(--muted2); font-weight: 600; }
+.leg-item { display: flex; align-items: center; gap: 0.3rem; font-size: 0.65rem; color: var(--text2); font-weight: 500; }
+.leg-dot { width: 9px; height: 9px; border-radius: 3px; flex-shrink: 0; }
+
+/* ── SPEC TABS ── */
+.spec-tabs-wrap {
+  max-width: 1300px;
+  margin: 1.2rem auto 0;
+  padding: 0 1.5rem;
+  display: flex;
+  gap: 0.75rem;
+}
+.spec-tab {
+  flex: 1;
+  padding: 0.85rem 1.2rem;
+  border-radius: var(--radius);
+  border: 2px solid var(--border);
+  cursor: pointer;
+  transition: all 0.2s;
+  background: linear-gradient(180deg,var(--card),#fff);
+  text-align: right;
+  box-shadow: var(--shadow);
+}
+.spec-tab:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
+.spec-tab.active.tab-er { border-color: var(--er); background: linear-gradient(90deg,var(--er-light),#fff); }
+.spec-tab.active.tab-gh { border-color: var(--gh); background: linear-gradient(90deg,var(--gh),#fff); }
+.st-label { font-size: 0.6rem; color: var(--muted2); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.2rem; }
+.st-title { font-size: 0.88rem; font-weight: 700; }
+.tab-er .st-title { color: var(--er); }
+.tab-gh .st-title { color: var(--gh); }
+.spec-tab.active.tab-er .st-title { color: var(--er); }
+.spec-tab.active.tab-gh .st-title { color: var(--gh); }
+.st-sub { font-size: 0.63rem; color: var(--muted2); margin-top: 0.15rem; }
+
+/* ── MAIN LAYOUT ── */
+.main {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 1.2rem 1.5rem 2rem;
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 1.2rem;
+  align-items: start;
+}
+
+/* ── SEM NAV ── */
+.sem-nav { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.sem-btn {
+  padding: 0.38rem 0.8rem;
+  border-radius: 8px;
+  border: 1.5px solid var(--border2);
+  background: var(--card);
+  color: var(--muted2);
+  cursor: pointer;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  transition: all 0.15s;
+  position: relative;
+  box-shadow: var(--shadow);
+}
+.sem-btn:hover { border-color: var(--er); color: var(--text); background: var(--er-light); }
+.sem-btn.act-er { border-color: var(--er); color: var(--er); background: var(--er-light); }
+.sem-btn.act-gh { border-color: var(--gh); color: var(--gh); background: var(--gh-light); }
+.sem-btn .dot {
+  position: absolute; top: -4px; left: -4px;
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--success); border: 2px solid var(--bg);
+  display: none;
+}
+.sem-btn.has-grade .dot { display: block; }
+
+/* ── SEM CARD ── */
+.sem-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  animation: fadeUp 0.2s ease;
+}
+@keyframes fadeUp { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:translateY(0); } }
+
+.sem-header {
+  padding: 0.9rem 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--card2);
+}
+.sem-num {
+  font-family: 'Space Mono', monospace;
+  font-size: 1.8rem;
+  font-weight: 700;
+  line-height: 1;
+  width: 2.2rem;
+  flex-shrink: 0;
+}
+.er-col { color: var(--er); }
+.gh-col { color: var(--gh); }
+.sem-info h3 { font-size: 0.88rem; font-weight: 700; color: var(--text); }
+.sem-info p { font-size: 0.65rem; color: var(--muted2); margin-top: 0.08rem; }
+.sem-avg { margin-right: auto; text-align: center; }
+.sem-avg-val {
+  font-family: 'Space Mono', monospace;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+}
+.sem-avg-lbl { font-size: 0.58rem; color: var(--muted2); text-transform: uppercase; letter-spacing: 1px; margin-top: 0.1rem; }
+
+/* ── UE GROUP ── */
+.ue-group { padding: 0.5rem 1.2rem 0; }
+.ue-title {
+  font-size: 0.58rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--muted);
+  padding: 0.3rem 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 0.2rem;
+  font-family: 'Space Mono', monospace;
+  font-weight: 700;
+}
+
+/* ── SUBJECT ROW ── */
+.sub-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.42rem 0.3rem;
+  border-bottom: 1px solid #f3f4f6;
+  border-radius: 6px;
+  transition: background 0.12s;
+}
+.sub-row:hover { background: #f9fafb; }
+.sub-name { font-size: 0.78rem; font-weight: 500; color: var(--text2); flex: 1; min-width: 0; }
+.coeff-tag {
+  font-size: 0.58rem;
+  font-family: 'Space Mono', monospace;
+  font-weight: 700;
+  color: var(--muted2);
+  background: var(--bg);
+  border: 1px solid var(--border2);
+  padding: 0.1rem 0.42rem;
+  border-radius: 4px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── INPUT GROUPS ── */
+.inp-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.05rem;
+  flex-shrink: 0;
+}
+.inp-wrap label {
+  font-size: 0.48rem;
+  font-family: 'Space Mono', monospace;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  white-space: nowrap;
+}
+.lbl-exam { color: var(--exam-color); }
+.lbl-cc   { color: var(--cc-color); }
+.lbl-td   { color: var(--td-color); }
+.lbl-tp   { color: var(--tp-color); }
+
+.grade-input {
+  width: 60px;
+  background: var(--bg);
+  border: 1.5px solid var(--border2);
+  border-radius: 7px;
+  color: var(--text);
+  font-family: 'Space Mono', monospace;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-align: center;
+  padding: 0.28rem 0.2rem;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+}
+.inp-wrap.wrap-exam .grade-input:focus { border-color: var(--exam-color); box-shadow: 0 0 0 3px var(--exam-bg); background: #fff; }
+.inp-wrap.wrap-cc   .grade-input:focus { border-color: var(--cc-color);   box-shadow: 0 0 0 3px var(--cc-bg);   background: #fff; }
+.inp-wrap.wrap-td   .grade-input:focus { border-color: var(--td-color);   box-shadow: 0 0 0 3px var(--td-bg);   background: #fff; }
+.inp-wrap.wrap-tp   .grade-input:focus { border-color: var(--tp-color);   box-shadow: 0 0 0 3px var(--tp-bg);   background: #fff; }
+.grade-input.has-val { background: #fff; border-color: var(--border2); }
+.grade-input.invalid-val { border-color: var(--danger) !important; background: var(--danger-bg); }
+/* colored borders when filled */
+.inp-wrap.wrap-exam .grade-input.has-val { border-color: #c4b5fd; }
+.inp-wrap.wrap-cc   .grade-input.has-val { border-color: #5eead4; }
+.inp-wrap.wrap-td   .grade-input.has-val { border-color: #fdba74; }
+.inp-wrap.wrap-tp   .grade-input.has-val { border-color: #7dd3fc; }
+
+.formula-tag {
+  font-size: 0.5rem;
+  font-family: 'Space Mono', monospace;
+  color: var(--muted);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── CALC RESULT ── */
+.calc-res {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.8rem;
+  font-weight: 700;
+  min-width: 38px;
+  text-align: center;
+  padding: 0.25rem 0.3rem;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+.g-pass { color: var(--success); background: var(--success-bg); }
+.g-warn { color: var(--warn);    background: var(--warn-bg); }
+.g-fail { color: var(--danger);  background: var(--danger-bg); }
+.g-none { color: var(--muted);   background: var(--bg); }
+
+/* ── RESULTS PANEL ── */
+.results-panel {
+  position: sticky;
+  top: 74px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+.res-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.res-card-head {
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--muted2);
+  font-family: 'Space Mono', monospace;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--card2);
+}
+.res-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--success); flex-shrink: 0;
+  animation: blink 2s infinite;
+}
+@keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
+.sem-res-row {
+  padding: 0.55rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #f3f4f6;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.sem-res-row:hover { background: var(--card2); }
+.sem-res-row.active-row { background: var(--card2); }
+.srl-label { font-size: 0.72rem; color: var(--muted2); font-family: 'Space Mono', monospace; }
+.srl-val { font-family: 'Space Mono', monospace; font-size: 0.9rem; font-weight: 700; }
+.overall-block { padding: 1rem; text-align: center; }
+.overall-lbl { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; color: var(--muted2); font-family: 'Space Mono', monospace; margin-bottom: 0.3rem; }
+.overall-num {
+  font-family: 'Space Mono', monospace;
+  font-size: 2.6rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--text);
+}
+.mention-badge { margin-top: 0.4rem; font-size: 0.72rem; font-weight: 700; padding: 0.2rem 0.85rem; border-radius: 999px; display: inline-block; }
+
+/* ── RING ── */
+.ring-wrap { display: flex; justify-content: center; padding: 0.8rem 0 0.4rem; }
+.ring-box { position: relative; width: 100px; height: 100px; }
+.ring-box svg { transform: rotate(-90deg); }
+.ring-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.ring-val { font-family: 'Space Mono', monospace; font-size: 1.35rem; font-weight: 700; line-height: 1; }
+.ring-lbl { font-size: 0.55rem; color: var(--muted2); text-transform: uppercase; letter-spacing: 1px; }
+
+/* ── BUTTONS ── */
+.act-btns { display: flex; gap: 0.5rem; }
+.btn {
+  flex: 1;
+  padding: 0.58rem 0.7rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 700;
+  transition: all 0.15s;
+  font-family: 'Inter', sans-serif;
+}
+.btn-primary { background: var(--er); color: #fff; }
+.btn-primary:hover { background: color-mix(in srgb, var(--er) 80%, #000 20%); transform: translateY(-1px); box-shadow: 0 6px 18px rgba(7,122,125,0.25); }
+.btn-ghost { background: var(--bg); border: 1.5px solid var(--border2); color: var(--muted2); }
+.btn-ghost:hover { border-color: var(--danger); color: var(--danger); background: var(--danger-bg); }
+
+/* ── PFE ── */
+.pfe-wrap { padding: 1.2rem; }
+.pfe-inner {
+  background: #f0fdf4;
+  border: 1.5px solid #86efac;
+  border-radius: var(--radius-sm);
+  padding: 1rem;
+}
+.pfe-t { font-size: 0.67rem; font-weight: 700; color: var(--success); font-family: 'Space Mono', monospace; letter-spacing: 1px; margin-bottom: 0.55rem; }
+.pfe-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.pfe-row label { font-size: 0.8rem; font-weight: 500; }
+.pfe-note { font-size: 0.65rem; color: var(--muted2); margin-top: 0.55rem; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 940px) {
+  .main { grid-template-columns: 1fr; padding: 1rem; }
+  .results-panel { position: static; }
+  .spec-tabs-wrap { padding: 0 1rem; }
+}
+@media (max-width: 580px) {
+  .spec-tabs-wrap { flex-direction: column; }
+  .sub-name { font-size: 0.72rem; }
+  .formula-tag, .coeff-tag { display: none; }
+  .grade-input { width: 52px; }
+}
+
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+.img-logo { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-left">
+
+    <!-- جعلنا العرض 100% والارتفاع تلقائي ليتناسب الشعار مع أي شاشة -->
+<svg width="100%" height="100%" viewBox="0 0 440 96" xmlns="http://w3.org" role="img" aria-label="School logo and name" style="max-width: 440px; height: auto;">
+  <defs>
+    <!-- قناع دائري ممركز داخل الـ viewBox الخاص بالـ SVG -->
+    <clipPath id="perfect-circle">
+      <circle cx="48" cy="48" r="48" />
+    </clipPath>
+  </defs>
+
+  <!-- أبعاد الصورة ثابتة داخل الـ viewBox (96x96) لتتحرك وتكبر بالتوازي مع الـ SVG ككل -->
+  <image href="img/download2-removebg-preview.png" 
+         x="0" 
+         y="0" 
+         width="96" 
+         height="96" 
+         preserveAspectRatio="xMidYMid meet" 
+         clip-path="url(#perfect-circle)" />
+
+  <!-- النص مقسم على سطرين -->
+  <text x="120" font-family="Inter, sans-serif" font-size="22" fill="var(--text)" font-weight="700">
+    <tspan y="40">Ministry of Higher Education</tspan>
+    <tspan x="120" y="70">& Scientific Research</tspan>
+  </text>
+</svg>
+
+
+
+
+
+
+
+  </div>
+  <div class="lang-group">
+    <button class="lang-btn active">EN</button>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <div class="logo-wrap">
+        <div class="logo-badge">
+          <img src="/img/download.png" class="img-logo">
+        </div>
+      <div class="logo-text">
+        <h1 id="h-title">Academic Grade Calculator</h1>
+        <p id="h-sub">National Higher School of Renewable Energies, Environment & Sustainable Development</p>
+      </div>
+    </div>
+    <div class="header-tags">
+      <span class="htag htag-er" id="chip-er">⚡ Renewable Energies</span>
+      <span class="htag htag-gh" id="chip-gh">🧪 Green Hydrogen</span>
+    </div>
+  </div>
+</header>
+
+<!-- LEGEND -->
+<div class="legend-bar">
+  <span class="leg-label" id="leg-title">Assessment type:</span>
+  <span class="leg-item"><span class="leg-dot" style="background:var(--exam-color)"></span><span id="leg-exam">Exam</span></span>
+  <span class="leg-item"><span class="leg-dot" style="background:var(--cc-color)"></span><span id="leg-cc">Continuous Assessment</span></span>
+  <span class="leg-item"><span class="leg-dot" style="background:var(--td-color)"></span><span id="leg-td">TD Directed Work</span></span>
+  <span class="leg-item"><span class="leg-dot" style="background:var(--tp-color)"></span><span id="leg-tp">TP Lab Work</span></span>
+</div>
+
+<!-- SPEC TABS -->
+<div class="spec-tabs-wrap">
+  <div class="spec-tab tab-er active" onclick="switchSpec('er')">
+    <div class="st-label" id="tab-label-er">Speciality 1</div>
+    <div class="st-title" id="tab-title-er">⚡ Renewable Energies</div>
+    <div class="st-sub">Renewable Energies</div>
+  </div>
+  <div class="spec-tab tab-gh" onclick="switchSpec('gh')">
+    <div class="st-label" id="tab-label-gh">Speciality 2</div>
+    <div class="st-title" id="tab-title-gh">🧪 Green Hydrogen</div>
+    <div class="st-sub">Green Hydrogen</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div>
+    <div class="sem-nav" id="semNav"></div>
+    <div id="semContent"></div>
+  </div>
+  <div class="results-panel">
+    <div class="res-card">
+      <div class="res-card-head"><span class="res-dot"></span><span id="res-title">Semester Results</span></div>
+      <div id="semResList"></div>
+      <div class="overall-block">
+        <div class="overall-lbl" id="res-overall-label">Overall Average</div>
+        <div class="overall-num" id="overallAvg">—</div>
+        <div id="overallMention"></div>
+      </div>
+    </div>
+    <div class="res-card">
+      <div class="res-card-head">
+        <span class="res-dot" style="background:#7c3aed"></span>
+        <span id="res-current">Current Semester Progress</span>
+      </div>
+      <div class="ring-wrap">
+        <div class="ring-box">
+          <svg width="100" height="100">
+            <circle cx="50" cy="50" r="42" fill="none" stroke="#f3f4f6" stroke-width="8"/>
+            <circle id="progressCircle" cx="50" cy="50" r="42" fill="none" stroke="var(--er)" stroke-width="8"
+              stroke-dasharray="263.89" stroke-dashoffset="263.89" stroke-linecap="round"
+              style="transition:stroke-dashoffset 0.5s ease, stroke 0.3s;"/>
+          </svg>
+          <div class="ring-center">
+            <div class="ring-val" id="ringVal">—</div>
+            <div class="ring-lbl" id="ring-label">Avg.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="act-btns">
+      <button class="btn btn-primary" onclick="recalcAll()" id="btn-recalc">🔄 Recalculate</button>
+      <button class="btn btn-ghost"   onclick="clearAll()"  id="btn-clear">🗑 Clear</button>
+    </div>
+  </div>
+</div>
+
+<p style="text-align:center;padding:.6rem 1.5rem 1.5rem;font-size:0.62rem;color:var(--muted);font-family:'Space Mono',monospace;" id="footer-text">
+  National Higher School of Renewable Energies — Batna, Algeria
+</p>
+
+<script>
+// ══════════════════════════════════════════
+// TRANSLATIONS
+// ══════════════════════════════════════════
+const LANG = {
+  en: { dir:'ltr',
+    'h-title':'Academic Grade Calculator',
+    'h-sub':'National Higher School of Renewable Energies, Environment & Sustainable Development',
+    'chip-er':'⚡ Renewable Energies','chip-gh':'🧪 Green Hydrogen',
+    'leg-title':'Assessment type:','leg-exam':'Exam','leg-cc':'Continuous Assessment',
+    'leg-td':'TD Directed Work','leg-tp':'TP Lab Work',
+    'tab-label-er':'Speciality 1','tab-title-er':'⚡ Renewable Energies',
+    'tab-label-gh':'Speciality 2','tab-title-gh':'🧪 Green Hydrogen',
+    'res-title':'Semester Results','res-overall-label':'Overall Average',
+    'res-current':'Current Semester Progress','ring-label':'Avg.',
+    'btn-recalc':'🔄 Recalculate','btn-clear':'🗑 Clear',
+    'footer-text':'National Higher School of Renewable Energies — Batna, Algeria',
+    sem_labels:['Semester 1','Semester 2','Semester 3','Semester 4','Semester 5','Semester 6'],
+    pfe_title:'Final Year Project (PFE)',
+    'pfe-label':'Project Grade (/ 20)','coeff-label':'Coeff.',
+    'avg-label':'Semester Avg.','sub-count':'subject(s)',
+    exam:'Exam',cc:'CC',td:'TD',tp:'TP',
+    mention:{pass:'Distinction 🏆',vg:'Very Good',good:'Good',avg:'Pass',fail:'Fail'},
+    confirm_clear:'Clear all grades for the current speciality?'
+  }
+};
+
+let currentLang = 'en';
+const TIDS = ['h-title','h-sub','chip-er','chip-gh','leg-title','leg-exam','leg-cc','leg-td','leg-tp',
+  'tab-label-er','tab-title-er','tab-label-gh','tab-title-gh','res-title','res-overall-label',
+  'res-current','ring-label','btn-recalc','btn-clear','footer-text'];
+
+function setLang(l) {
+  currentLang = l;
+  const t = LANG[l];
+  document.documentElement.dir = t.dir;
+  document.documentElement.lang = l;
+  document.body.style.fontFamily = l==='en' ? "'Inter',sans-serif" : "'IBM Plex Sans Arabic','Inter',sans-serif";
+  TIDS.forEach(id => { const el=document.getElementById(id); if(el && t[id]) el.textContent = t[id]; });
+  document.querySelectorAll('.lang-btn').forEach((b,i) => b.classList.toggle('active', ['ar','fr','en'][i]===l));
+  renderAll();
+}
+
+// ══════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════
+// FIXES APPLIED:
+// - ER S1: TIC moved to S2, Reverse Engineering moved to S1
+// - ER S2: Reverse Engineering removed from S2, TIC added
+// - calc scientifique (ER): exam:0.4, cc:0.6 (corrected)
+// - GH S1: حساب علمي وبرمجة already has exam:0.4, cc:0.6 ✓
+
+const SPECS = {
+  er: { semesters: [
+    { id:1, groups:[
+      { ue:'UEF3.1', name:{ar:'وحدات التعليم الأساسية — UEF 3.1',fr:'UE Fondamentales — UEF 3.1',en:'Core Units — UEF 3.1'}, subjects:[
+        {ar:'مكانيك الموائع',fr:'Mécanique des Fluides Approfondis',en:'Advanced Fluid Mechanics',coeff:5,eval:{exam:0.6,cc:0.4}},
+        {ar:'الديناميكا الحرارية التطبيقية',fr:'Thermodynamique Appliquée',en:'Applied Thermodynamics',coeff:5,eval:{exam:0.6,cc:0.4}},
+      ]},
+      { ue:'UEF3.2', name:{ar:'وحدات التعليم الأساسية — UEF 3.2',fr:'UE Fondamentales — UEF 3.2',en:'Core Units — UEF 3.2'}, subjects:[
+        {ar:'الآلات الكهربائية 1',fr:'Machines Électriques 1',en:'Electrical Machines 1',coeff:5,eval:{exam:0.6,cc:0.4}},
+        {ar:'إلكترونيك القوة 1',fr:'Électronique de Puissance 1',en:'Power Electronics 1',coeff:5,eval:{exam:0.6,cc:0.4}},
+      ]},
+      { ue:'UEM3.1', name:{ar:'وحدات التعليم المنهجية — UEM 3.1',fr:'UE Méthodologiques — UEM 3.1',en:'Methodological Units — UEM 3.1'}, subjects:[
+        // FIXED: exam:0.4, cc:0.6
+        {ar:'حساب علمي وبرمجة',fr:'Logique Combinatoire et Séquentielle',en:'Scientific Computing & Programming',coeff:4,eval:{exam:0.4,cc:0.6}},
+        {ar:'موارد الطاقات المتجددة',fr:'Gisements Énergétiques Renouvelables',en:'Renewable Energy Resources',coeff:3,eval:{exam:0.5,cc:0.5}},
+      ]},
+      { ue:'UED3.1', name:{ar:'وحدات التعليم الاستكشافية — UED',fr:'UE Découverte — UED 3.1',en:'Discovery Units — UED 3.1'}, subjects:[
+        {ar:'علوم المادة',fr:'Sciences des Matériaux',en:'Materials Science',coeff:1,eval:{exam:1.0}},
+      ]},
+      { ue:'UET3.1', name:{ar:'وحدة التعليم الأفقية — UET',fr:'UE Transversale — UET 3.1',en:'Transversal Units — UET 3.1'}, subjects:[
+        {ar:'لغة إنجليزية 1',fr:'Anglais 1',en:'English 1',coeff:1,eval:{exam:1.0}},
+        // FIXED: Reverse Engineering in S1 (swapped with TIC)
+        {ar:'الهندسة العكسية',fr:'Reverse Engineering',en:'Reverse Engineering',coeff:1,eval:{exam:1.0}},
+      ]},
+    ]},
+    { id:2, groups:[
+      { ue:'UEF3.2', name:{ar:'وحدات التعليم الأساسية — UEF',fr:'UE Fondamentales — UEF 3.2',en:'Core Units — UEF 3.2'}, subjects:[
+        {ar:'إلكترونيك القوة 2',fr:'Électronique de Puissance 2',en:'Power Electronics 2',coeff:5,eval:{exam:0.6,cc:0.4}},
+        {ar:'الآلات الكهربائية 2',fr:'Machines Électriques 2',en:'Electrical Machines 2',coeff:4,eval:{exam:0.6,cc:0.4}},
+        {ar:'أتوماتيك 1',fr:'Automatique 1',en:'Automatic Control 1',coeff:4,eval:{exam:0.6,cc:0.4}},
+        {ar:'نقل الحرارة',fr:'Transferts Thermiques',en:'Heat Transfer',coeff:3,eval:{exam:0.6,cc:0.4}},
+      ]},
+      { ue:'UEM3.2', name:{ar:'وحدات التعليم المنهجية — UEM',fr:'UE Méthodologiques — UEM 3.2',en:'Methodological Units — UEM 3.2'}, subjects:[
+        {ar:'مايكروبروسيسور ومايكروكنترولر',fr:'µ-Processeurs et µ-Contrôleurs',en:'Microprocessors & Microcontrollers',coeff:2,eval:{exam:0.5,cc:0.5}},
+        {ar:'تحويل الطاقات المتجددة',fr:'Conversion des Énergies Renouvelables',en:'Renewable Energy Conversion',coeff:2,eval:{exam:0.5,cc:0.5}},
+        {ar:'أ.ت. موائع وحرارة',fr:'TP Thermofluidique',en:'Lab: Thermofluidics',coeff:2,eval:{exam:1.0}},
+        {ar:'الحوسبة العلمية والبرمجة',fr:'Calcul Scientifique et Programmation',en:'Scientific Computing & Programming',coeff:2,eval:{exam:0.6,cc:0.4}},
+        {ar:'ورشة 2',fr:'Atelier 2',en:'Workshop 2',coeff:2,eval:{exam:1.0}},
+      ]},
+      { ue:'UED3.2', name:{ar:'وحدات التعليم الاستكشافية',fr:'UE Découverte — UED 3.2',en:'Discovery Units — UED 3.2'}, subjects:[
+        {ar:'تربص 1',fr:'Stage 1',en:'Internship 1',coeff:1,eval:{exam:1.0}},
+        {ar:'بيئة وتنمية مستدامة',fr:'Environnement et Développement Durable',en:'Environment & Sustainable Development',coeff:1,eval:{exam:1.0}},
+      ]},
+      { ue:'UET3.2', name:{ar:'وحدة التعليم الأفقية',fr:'UE Transversale — UET 3.2',en:'Transversal Units'}, subjects:[
+        // FIXED: TIC now in S2 (swapped with Reverse Engineering)
+        {ar:'تكنولوجيا المعلومات والاتصالات',fr:'TIC',en:'ICT',coeff:1,eval:{exam:1.0}},
+        {ar:'لغة إنجليزية 2',fr:'Anglais 2',en:'English 2',coeff:1,eval:{exam:1.0}},
+      ]},
+    ]},
+    { id:3, groups:[
+      { ue:'UEF4.1', name:{ar:'وحدات التعليم الأساسية — UEF 4.1',fr:'UE Fondamentales — UEF 4.1',en:'Core Units — UEF 4.1'}, subjects:[
+        {ar:'هندسة الأنظمة الكهروضوئية',fr:'Engineering des Systèmes Photovoltaïques',en:'PV Systems Engineering',coeff:4,eval:{exam:0.6,cc:0.4}},
+        {ar:'هندسة أنظمة توربينات الرياح',fr:'Engineering des Systèmes Éoliens',en:'Wind Turbine Systems Engineering',coeff:4,eval:{exam:0.6,cc:0.4}},
+        {ar:'أتوماتيك 2',fr:'Automatique 2',en:'Automatic Control 2',coeff:4,eval:{exam:0.6,td:0.2,tp:0.2}},
+        {ar:'الشبكات الكهربائية 1',fr:'Réseaux Électriques 1',en:'Electrical Networks 1',coeff:4,eval:{exam:0.6,cc:0.4}},
+        {ar:'الطاقة في المبنى',fr:'Énergétique du Bâtiment',en:'Building Energy',coeff:3,eval:{exam:0.6,cc:0.4}},
+      ]},
+      { ue:'UEM4.1', name:{ar:'وحدات التعليم المنهجية — UEM 4.1',fr:'UE Méthodologiques — UEM 4.1',en:'Methodological Units — UEM 4.1'}, subjects:[
+        {ar:'نمذجة وتحسين كفاءة الأنظمة الطاقوية',fr:'Modélisation et Optimisation des Systèmes Énergétiques',en:'Modelling & Optimisation of Energy Systems',coeff:3,eval:{exam:0.5,cc:0.5}},
+        {ar:'تخزين الطاقة',fr:"Stockage d'Énergie",en:'Energy Storage',coeff:2,eval:{exam:0.6,cc:0.4}},
+        {ar:'تكنولوجيا الخلية الشمسية',fr:'Technologie de la Cellule PV',en:'PV Cell Technology',coeff:2,eval:{exam:0.5,cc:0.5}},
+        {ar:'ورشة 3 + عناصر الآلة',fr:'Atelier 3 + Éléments de Machine',en:'Workshop 3 + Machine Elements',coeff:2,eval:{exam:1.0}},
+      ]},
+      { ue:'UED4.1', name:{ar:'وحدات التعليم الاستكشافية',fr:'UE Découverte — UED 4.1',en:'Discovery Units'}, subjects:[
+        {ar:'اقتصاد المؤسسة',fr:"Économie de l'Entreprise",en:'Business Economics',coeff:1,eval:{exam:1.0}},
+      ]},
+      { ue:'UET4.1', name:{ar:'وحدة التعليم الأفقية',fr:'UE Transversale — UET 4.1',en:'Transversal Units'}, subjects:[
+        {ar:'لغة إنجليزية 3',fr:'Anglais 3',en:'English 3',coeff:1,eval:{exam:1.0}},
+      ]},
+    ]},
+    { id:4, groups:[
+      { ue:'UEF4.2', name:{ar:'وحدات التعليم الأساسية — UEF 4.2',fr:'UE Fondamentales — UEF 4.2',en:'Core Units — UEF 4.2'}, subjects:[
+        {ar:'هندسة الأنظمة الحرارية الشمسية',fr:'Engineering des Systèmes Solaires Thermiques',en:'Solar Thermal Systems Engineering',coeff:4,eval:{exam:0.5,cc:0.5}},
+        {ar:'الكتلة الحيوية وتكنولوجيا الغاز الحيوي',fr:'Biomasse et la Technologie du Biogaz',en:'Biomass & Biogas Technology',coeff:3,eval:{exam:0.6,cc:0.4}},
+        {ar:'الشبكات الكهربائية 2',fr:'Réseaux Électriques 2',en:'Electrical Networks 2',coeff:4,eval:{exam:0.6,td:0.2,tp:0.2}},
+        {ar:'حماية الأنظمة الكهربائية',fr:'Protection des Réseaux Électriques',en:'Electrical Systems Protection',coeff:4,eval:{exam:0.6,cc:0.4}},
+        {ar:'إدماج الطاقات المتجددة في الشبكة الكهربائية',fr:'Intégration des Énergies Renouvelables dans le Réseau',en:'RES Integration into the Grid',coeff:4,eval:{exam:0.6,cc:0.4}},
+      ]},
+      { ue:'UEM4.2', name:{ar:'وحدات التعليم المنهجية — UEM 4.2',fr:'UE Méthodologiques — UEM 4.2',en:'Methodological Units — UEM 4.2'}, subjects:[
+        {ar:'الذكاء الاصطناعي في الأنظمة الطاقوية',fr:'Intelligence Artificielle pour les Systèmes Énergétiques',en:'AI for Energy Systems',coeff:2,eval:{exam:0.5,cc:0.5}},
+        {ar:'محسات ومشغلات',fr:'Capteurs et Actionneurs',en:'Sensors & Actuators',coeff:2,eval:{exam:0.5,cc:0.5}},
+        {ar:'نظرية وتكنولوجيا المجسات الحرارية الشمسية',fr:'Théorie et Technologie des Capteurs Solaires Thermiques',en:'Theory & Technology of Solar Thermal Collectors',coeff:2,eval:{exam:0.6,cc:0.4}},
+        {ar:'ورشة 4 + التربص',fr:'Prot + Atelier 4',en:'Workshop 4',coeff:2,eval:{exam:1.0}},
+      ]},
+      { ue:'UED4.2', name:{ar:'وحدات التعليم الاستكشافية',fr:'UE Découverte — UED 4.2',en:'Discovery Units'}, subjects:[
+        {ar:'الاقتصاد الدائري',fr:'Économie Circulaire',en:'Circular Economy',coeff:1,eval:{exam:1.0}},
+        {ar:'تربص 2',fr:'Stage 2',en:'Internship 2',coeff:1,eval:{exam:1.0}},
+      ]},
+      { ue:'UET4.2', name:{ar:'وحدة التعليم الأفقية',fr:'UE Transversale — UET 4.2',en:'Transversal Units'}, subjects:[
+        {ar:'لغة إنجليزية 4',fr:'Anglais 4',en:'English 4',coeff:1,eval:{exam:1.0}},
+      ]},
+    ]},
+    { id:5, groups:[
+      { ue:'UEF5.1', name:{ar:'وحدات التعليم الأساسية — UEF 5.1',fr:'UE Fondamentales — UEF 5.1',en:'Core Units — UEF 5.1'}, subjects:[
+        {ar:'تحسين الكفاءة التقنية والاقتصادية للأنظمة الطاقوية الهجينة',fr:'Optimisation Technico-économique des Systèmes Hybrides',en:'Techno-economic Optimisation of Hybrid Energy Systems',coeff:3,eval:{exam:0.5,cc:0.5}},
+        {ar:'التحكم في أنظمة الطاقات المتجددة',fr:'Commande des Systèmes à Énergies Renouvelables',en:'Control of Renewable Energy Systems',coeff:3,eval:{exam:0.6,cc:0.4}},
+        {ar:'إدارة المشاريع وتحليل دورة الحياة',fr:'Management de Projets et Analyse de Cycle de Vie',en:'Project Management & Life Cycle Analysis',coeff:3,eval:{exam:0.6,cc:0.4}},
+        {ar:'جودة الطاقة الكهربائية',fr:"Qualité de l'Énergie Électrique",en:'Power Quality',coeff:3,eval:{exam:0.6,cc:0.4}},
+        {ar:'الشبكات الصغيرة والشبكات الذكية',fr:'Microgrids et Smart Grids',en:'Microgrids & Smart Grids',coeff:3,eval:{exam:0.6,cc:0.4}},
+        {ar:'مراقبة، تشخيص، وصيانة الأنظمة الطاقوية',fr:'Monitoring, Diagnostique et Maintenance des Systèmes Énergétiques',en:'Monitoring, Diagnostics & Maintenance of Energy Systems',coeff:3,eval:{exam:0.5,cc:0.5}},
+      ]},
+      { ue:'UEM5.1', name:{ar:'وحدات التعليم المنهجية',fr:'UE Méthodologiques — UEM 5.1',en:'Methodological Units'}, subjects:[
+        {ar:'ورشة 1: المقاولاتية وإنشاء شركة ناشئة',fr:"Atelier 1: Entrepreneuriat et Montage d'une Startup",en:'Workshop 1: Entrepreneurship & Startup',coeff:2,eval:{exam:1.0}},
+        {ar:'تدقيق الطاقة',fr:'Audit Énergétique',en:'Energy Audit',coeff:3,eval:{exam:1.0}},
+      ]},
+      { ue:'UED5.1', name:{ar:'وحدات التعليم الاستكشافية',fr:'UE Découverte — UED 5.1',en:'Discovery Units'}, subjects:[
+        {ar:'الانتقال الطاقوي والتشريع والتقنين',fr:'Transition Énergétique et Législation',en:'Energy Transition & Legislation',coeff:1,eval:{exam:1.0}},
+        {ar:'الاتصالات لشبكات الطاقة الذكية',fr:'Télécommunications pour Réseaux Énergétiques Intelligents',en:'Telecom for Smart Energy Networks',coeff:2,eval:{exam:1.0}},
+        {ar:'توجهات تكنولوجية',fr:'Tendances Technologiques',en:'Technology Trends',coeff:1,eval:{exam:1.0}},
+        {ar:'تربص 3',fr:'Stage 3',en:'Internship 3',coeff:1,eval:{exam:1.0}},
+      ]},
+      { ue:'UET5.1', name:{ar:'وحدة التعليم الأفقية',fr:'UE Transversale — UET 5.1',en:'Transversal Units'}, subjects:[
+        {ar:'البحث الوثائقي والصياغة العلمية',fr:'Recherche Documentaire et Rédaction Scientifique',en:'Documentary Research & Scientific Writing',coeff:1,eval:{exam:1.0}},
+        {ar:'الابتكار، الملكية الفكرية والأخلاقيات',fr:'Innovation, Propriété Intellectuelle et Déontologie',en:'Innovation, IP & Ethics',coeff:1,eval:{exam:1.0}},
+      ]},
+    ]},
+    { id:6, isPFE:true, pfeCoeff:17, groups:[] }
+  ]},
+  gh: { semesters: [
+    { id:1, groups:[
+      { ue:'UEF1', name:{ar:'وحدات التعليم الأساسية — UEF 1',fr:'UE Fondamentales — UEF1',en:'Core Units — UEF1'}, subjects:[
+        {ar:'الكترونيك القوة 1 GH',fr:'Électronique de Puissance 1',en:'Power Electronics 1',coeff:5,eval:{exam:0.6,cc:0.4}},
+        {ar:'الآلات الكهربائية 1 GH',fr:'Machines Électriques',en:'Electrical Machines 1',coeff:6,eval:{exam:0.6,cc:0.4}},
+      ]},
+      { ue:'UEF2', name:{ar:'وحدات التعليم الأساسية — UEF 2',fr:'UE Fondamentales — UEF2',en:'Core Units — UEF2'}, subjects:[
+        {ar:'مكانيك الموائع GH',fr:'Mécanique des Fluides',en:'Fluid Mechanics',coeff:5,eval:{exam:0.6,cc:0.4}},
+        {ar:'الديناميكا الحرارية التطبيقية GH',fr:'Thermodynamique Appliquée',en:'Applied Thermodynamics',coeff:4,eval:{exam:0.6,cc:0.4}},
+      ]},
+      { ue:'UEM1', name:{ar:'وحدات التعليم المنهجية — UEM',fr:'UE Méthodologiques — UEM1',en:'Methodological Units — UEM1'}, subjects:[
+        {ar:'حساب علمي وبرمجة GH',fr:'Calcul Scientifique et Programmation',en:'Scientific Computing & Programming',coeff:4,eval:{exam:0.4,cc:0.6}},
+        {ar:'موارد الطاقات المتجددة GH',fr:'Gisements Énergétiques Renouvelables',en:'Renewable Energy Resources',coeff:3,eval:{exam:0.5,cc:0.5}},
+        {ar:'ورشة 1 GH',fr:'Atelier 1',en:'Workshop 1',coeff:2,eval:{exam:1.0}},
+      ]},
+      { ue:'UED1', name:{ar:'وحدات التعليم الاستكشافية',fr:'UE Découverte — UED1',en:'Discovery Units'}, subjects:[
+        {ar:'علوم المادة GH',fr:'Sciences des Matériaux',en:'Materials Science',coeff:1,eval:{exam:1.0}},
+      ]},
+      { ue:'UET1', name:{ar:'وحدة التعليم الأفقية',fr:'UE Transversale — UET1',en:'Transversal Units'}, subjects:[
+        {ar:'لغة إنجليزية 1 GH',fr:'Anglais 1',en:'English 1',coeff:1,eval:{exam:1.0}},
+      ]},
+    ]},
+    { id:2, groups:[
+      { ue:'UEF1', name:{ar:'وحدات التعليم الأساسية — UEF 1',fr:'UE Fondamentales — UEF1',en:'Core Units — UEF1'}, subjects:[
+        {ar:'الكترونيك القوة 2 GH',fr:'Électronique de Puissance 2',en:'Power Electronics 2',coeff:5,eval:{exam:0.6,cc:0.4}},
+        {ar:'أتوماتيك وآليات',fr:'Automatique et Automates',en:'Automatic Control & Automata',coeff:5,eval:{exam:0.6,cc:0.4}},
+      ]},
+      { ue:'UEF2', name:{ar:'وحدات التعليم الأساسية — UEF 2',fr:'UE Fondamentales — UEF2',en:'Core Units — UEF2'}, subjects:[
+        {ar:'نقل الحرارة GH',fr:'Transferts Thermiques',en:'Heat Transfer',coeff:4,eval:{exam:0.6,cc:0.4}},
+        {ar:'الشبكات الكهربائية GH',fr:'Réseaux Électriques',en:'Electrical Networks',coeff:4,eval:{exam:0.6,cc:0.4}},
+      ]},
+      { ue:'UEM1', name:{ar:'وحدات التعليم المنهجية',fr:'UE Méthodologiques — UEM1',en:'Methodological Units'}, subjects:[
+        {ar:'مايكروبروسيسور ومايكروكنترولر GH',fr:'µ-Processeurs et µ-Contrôleurs',en:'Microprocessors & Microcontrollers',coeff:3,eval:{exam:0.5,cc:0.5}},
+        {ar:'تحويل الطاقات المتجددة GH',fr:'Conversion des Énergies Renouvelables',en:'Renewable Energy Conversion',coeff:3,eval:{exam:0.5,cc:0.5}},
+        {ar:'أ.ت. موائع وحرارة GH',fr:'TP Thermofluidique',en:'Lab: Thermofluidics',coeff:2,eval:{exam:1.0}},
+        {ar:'ورشة 2 GH',fr:'Atelier 2',en:'Workshop 2',coeff:2,eval:{exam:1.0}},
+      ]},
+      { ue:'UED1', name:{ar:'وحدات التعليم الاستكشافية',fr:'UE Découverte',en:'Discovery Units'}, subjects:[
+        {ar:'تربص 1 GH',fr:'Stage 1',en:'Internship 1',coeff:1,eval:{exam:1.0}},
+      ]},
+      { ue:'UET1', name:{ar:'وحدة التعليم الأفقية',fr:'UE Transversale',en:'Transversal Units'}, subjects:[
+        {ar:'لغة إنجليزية 2 GH',fr:'Anglais 2',en:'English 2',coeff:1,eval:{exam:1.0}},
+      ]},
+    ]},
+    { id:3, groups:[
+      { ue:'UEF1', name:{ar:'وحدات التعليم الأساسية — UEF 1',fr:'UE Fondamentales — UEF1',en:'Core Units — UEF1'}, subjects:[
+        {ar:'تصميم وتحسين كفاءة المحطات الكهروضوئية',fr:'Design et Optimisation des Centrales Électriques PV',en:'Design & Optimisation of PV Power Plants',coeff:4,eval:{exam:0.6,cc:0.4}},
+        {ar:'تصميم وتحسين كفاءة محطات إنتاج الكهرباء بتوربينات الرياح',fr:'Design et Optimisation des Centrales Électriques Éoliennes',en:'Design & Optimisation of Wind Power Plants',coeff:4,eval:{exam:0.6,cc:0.4}},
+        {ar:'الطاقة في المبنى GH',fr:'Énergétique du Bâtiment',en:'Building Energy',coeff:5,eval:{exam:0.6,cc:0.4}},
+      ]},
+      { ue:'UEM1', name:{ar:'وحدات التعليم المنهجية',fr:'UE Méthodologiques — UEM1',en:'Methodological Units'}, subjects:[
+        {ar:'نمذجة وتحسين كفاءة الأنظمة الطاقوية GH',fr:'Modélisation et Optimisation des Systèmes Énergétiques',en:'Modelling & Optimisation of Energy Systems',coeff:4,eval:{exam:0.5,cc:0.5}},
+        {ar:'تخزين الطاقة GH',fr:"Stockage d'Énergie",en:'Energy Storage',coeff:3,eval:{exam:0.6,cc:0.4}},
+        {ar:'دراسة نظرية وتكنولوجية للواقط الحرارية الشمسية',fr:'Théorie et Technologie des Capteurs Solaires Thermiques',en:'Theory & Technology of Solar Thermal Collectors',coeff:3,eval:{exam:0.6,cc:0.4}},
+        {ar:'تكنولوجيا الخلية الشمسية GH',fr:'Technologie de la Cellule PV',en:'PV Cell Technology',coeff:3,eval:{exam:0.5,cc:0.5}},
+        {ar:'ورشة 3 GH',fr:'Atelier 3',en:'Workshop 3',coeff:2,eval:{exam:1.0}},
+      ]},
+      { ue:'UED1', name:{ar:'وحدات التعليم الاستكشافية',fr:'UE Découverte',en:'Discovery Units'}, subjects:[
+        {ar:'إقتصاد المؤسسة GH',fr:"Économie de l'Entreprise",en:'Business Economics',coeff:1,eval:{exam:1.0}},
+      ]},
+      { ue:'UET1', name:{ar:'وحدة التعليم الأفقية',fr:'UE Transversale',en:'Transversal Units'}, subjects:[
+        {ar:'لغة إنجليزية 3 GH',fr:'Anglais 3',en:'English 3',coeff:1,eval:{exam:1.0}},
+      ]},
+    ]},
+    { id:4, groups:[
+      { ue:'UEF1', name:{ar:'وحدات التعليم الأساسية — UEF 1',fr:'UE Fondamentales — UEF1',en:'Core Units — UEF1'}, subjects:[
+        {ar:'كيمياء الهيدروجين',fr:"Chimie de l'Hydrogène",en:'Hydrogen Chemistry',coeff:3,eval:{exam:0.6,cc:0.4}},
+        {ar:'الكهروكيميائية',fr:'Électrochimie',en:'Electrochemistry',coeff:4,eval:{exam:0.5,td:0.25,tp:0.25}},
+        {ar:'جودة المياه',fr:"Qualité de l'Eau",en:'Water Quality',coeff:2,eval:{exam:0.6,cc:0.4}},
+      ]},
+      { ue:'UEF2', name:{ar:'وحدات التعليم الأساسية — UEF 2',fr:'UE Fondamentales — UEF2',en:'Core Units — UEF2'}, subjects:[
+        {ar:'إنتاج الهيدروجين الأخضر',fr:"Production de l'Hydrogène Vert",en:'Green Hydrogen Production',coeff:4,eval:{exam:0.6,tp:0.4}},
+        {ar:'تخزين الهيدروجين',fr:"Stockage de l'Hydrogène",en:'Hydrogen Storage',coeff:4,eval:{exam:0.6,td:0.2,tp:0.2}},
+        {ar:'نقل وتوزيع الهيدروجين',fr:"Transport et Distribution de l'Hydrogène",en:'Hydrogen Transport & Distribution',coeff:2,eval:{exam:0.6,td:0.2,tp:0.2}},
+      ]},
+      { ue:'UEM1', name:{ar:'وحدات التعليم المنهجية',fr:'UE Méthodologiques — UEM1',en:'Methodological Units'}, subjects:[
+        {ar:'أ.ت. سلسلة الطاقة للهيدروجين الأخضر',fr:"TP Chaîne Énergétique de l'Hydrogène Vert",en:'Lab: Green Hydrogen Energy Chain',coeff:2,eval:{exam:1.0}},
+        {ar:'التحويل الكهروكيميائي للهيدروجين',fr:"Conversion Électrochimique de l'Hydrogène",en:'Electrochemical Conversion of Hydrogen',coeff:2,eval:{exam:0.6,td:0.2,tp:0.2}},
+        {ar:'الاحتراق والتحويل الحراري للهيدروجين',fr:"Combustion et Conversion Thermique de l'Hydrogène",en:'Combustion & Thermal Conversion of Hydrogen',coeff:2,eval:{exam:0.6,td:0.2,tp:0.2}},
+        {ar:'الذكاء الاصطناعي في الأنظمة الطاقوية GH',fr:'Intelligences Artificielles pour les Systèmes Énergétiques',en:'AI for Energy Systems',coeff:2,eval:{exam:0.5,td:0.25,tp:0.25}},
+      ]},
+      { ue:'UED1', name:{ar:'وحدات التعليم الاستكشافية',fr:'UE Découverte',en:'Discovery Units'}, subjects:[
+        {ar:'الاقتصاد الدائري GH',fr:'Économie Circulaire',en:'Circular Economy',coeff:1,eval:{exam:1.0}},
+        {ar:'تربص 2 GH',fr:'Stage 2',en:'Internship 2',coeff:1,eval:{exam:1.0}},
+      ]},
+      { ue:'UET1', name:{ar:'وحدة التعليم الأفقية',fr:'UE Transversale',en:'Transversal Units'}, subjects:[
+        {ar:'لغة إنجليزية 4 GH',fr:'Anglais 4',en:'English 4',coeff:1,eval:{exam:1.0}},
+      ]},
+    ]},
+    { id:5, groups:[
+      { ue:'UEF1', name:{ar:'وحدات التعليم الأساسية — UEF 1',fr:'UE Fondamentales — UEF1',en:'Core Units — UEF1'}, subjects:[
+        {ar:'تحسين الكفاءة التقنية والاقتصادية للأنظمة الطاقوية الهجينة GH',fr:'Optimisation Technico-économique des Systèmes Hybrides',en:'Techno-economic Optimisation of Hybrid Energy Systems',coeff:4,eval:{exam:0.5,cc:0.5}},
+        {ar:'إدارة المشاريع وتحليل دورة الحياة GH',fr:'Management de Projets et Analyse de Cycle de Vie',en:'Project Management & Life Cycle Analysis',coeff:3,eval:{exam:0.6,cc:0.4}},
+        {ar:'التطبيقات الصناعية للهيدروجين الأخضر',fr:"Applications Industrielles de l'Hydrogène Vert",en:'Industrial Applications of Green Hydrogen',coeff:4,eval:{exam:0.6,cc:0.4}},
+        {ar:'تكنولوجيا Power to X',fr:'Technologie Power to X',en:'Power to X Technology',coeff:3,eval:{exam:0.6,cc:0.4}},
+      ]},
+      { ue:'UEM1', name:{ar:'وحدات التعليم المنهجية',fr:'UE Méthodologiques',en:'Methodological Units'}, subjects:[
+        {ar:'نمذجة أنظمة الهيدروجين الأخضر',fr:"Modélisation des Systèmes de l'Hydrogène Vert",en:'Modelling of Green Hydrogen Systems',coeff:4,eval:{exam:1.0}},
+        {ar:'ورشة 1 GH S5: المقاولاتية',fr:"Atelier 1: Entrepreneuriat et Montage d'une Startup",en:'Workshop 1: Entrepreneurship & Startup',coeff:2,eval:{exam:1.0}},
+        {ar:'ورشة 2 GH S5: دراسة هندسية',fr:"Atelier 2: Étude d'Ingénierie d'un Projet",en:'Workshop 2: Project Engineering Study',coeff:2,eval:{exam:1.0}},
+        {ar:'مخاطر الهيدروجين وأنظمة السلامة',fr:"Risque et Sécurité de l'Hydrogène",en:'Hydrogen Risk & Safety',coeff:1,eval:{exam:1.0}},
+      ]},
+      { ue:'UED1', name:{ar:'وحدات التعليم الاستكشافية',fr:'UE Découverte',en:'Discovery Units'}, subjects:[
+        {ar:'تسويق الهيدروجين والأنظمة البيئية',fr:"Marché de l'Hydrogène et Ecosystèmes",en:'Hydrogen Market & Ecosystems',coeff:1,eval:{exam:1.0}},
+        {ar:'الانتقال الطاقوي والتشريع والتقنين GH',fr:'Transition Énergétique et Législation',en:'Energy Transition & Legislation',coeff:1,eval:{exam:1.0}},
+        {ar:'توجهات تكنولوجية GH',fr:'Innovation et Tendances Technologiques',en:'Innovation & Technology Trends',coeff:1,eval:{exam:1.0}},
+        {ar:'تربص 3 GH',fr:'Stage 3',en:'Internship 3',coeff:2,eval:{exam:1.0}},
+      ]},
+      { ue:'UET1', name:{ar:'وحدة التعليم الأفقية',fr:'UE Transversale',en:'Transversal Units'}, subjects:[
+        {ar:'البحث الوثائقي والصياغة العلمية GH',fr:'Recherche Documentaire et Rédaction Scientifique',en:'Documentary Research & Scientific Writing',coeff:1,eval:{exam:1.0}},
+        {ar:'الابتكار، الملكية الفكرية والأخلاقيات GH',fr:'Innovation, Propriété Intellectuelle et Déontologie',en:'Innovation, IP & Ethics',coeff:1,eval:{exam:1.0}},
+      ]},
+    ]},
+    { id:6, isPFE:true, pfeCoeff:30, groups:[] }
+  ]}
+};
+
+// ══════════════════════════════════════════
+// STATE & INIT
+// ══════════════════════════════════════════
+let currentSpec='er', currentSem=1, grades={};
+
+// Remove unused language keys from SPECS and normalize to English-only keys
+function cleanupLanguages() {
+  for (const sp in SPECS) {
+    for (const sem of SPECS[sp].semesters) {
+      for (const g of sem.groups||[]) {
+        if (g.name) {
+          g.name.en = g.name.en || g.name.fr || g.name.ar || '';
+          delete g.name.fr; delete g.name.ar;
+        }
+        for (const s of g.subjects||[]) {
+          s.en = s.en || s.fr || s.ar || '';
+          delete s.fr; delete s.ar;
+        }
+      }
+    }
+  }
+}
+
+function initGrades() {
+  for (const sp in SPECS) {
+    grades[sp] = {};
+    for (const sem of SPECS[sp].semesters) {
+      grades[sp][sem.id] = {};
+      if (sem.isPFE) { grades[sp][sem.id]['__pfe__'] = {exam:''}; continue; }
+      for (const g of sem.groups) for (const s of g.subjects) {
+            const e = {exam:''};
+            if (s.eval.cc  !== undefined) e.cc  = '';
+            if (s.eval.td  !== undefined) e.td  = '';
+            if (s.eval.tp  !== undefined) e.tp  = '';
+            grades[sp][sem.id][s.en] = e;
+          }
+    }
+  }
+}
+
+// ══════════════════════════════════════════
+// CALCULATION
+// ══════════════════════════════════════════
+function calcSub(s, gd) {
+  const ev = s.eval;
+  const eV=parseFloat(gd.exam), cV=parseFloat(gd.cc), dV=parseFloat(gd.td), pV=parseFloat(gd.tp);
+  const hE=gd.exam!==''&&!isNaN(eV);
+  const hC=gd.cc!==undefined&&gd.cc!==''&&!isNaN(cV);
+  const hD=gd.td!==undefined&&gd.td!==''&&!isNaN(dV);
+  const hP=gd.tp!==undefined&&gd.tp!==''&&!isNaN(pV);
+  if (ev.exam===1.0 && !ev.cc && !ev.td && !ev.tp) return hE ? eV : null;
+  if (ev.cc && !ev.td && !ev.tp) return (hE&&hC) ? eV*ev.exam+cV*ev.cc : null;
+  if (ev.td && ev.tp && !ev.cc) {
+    if (hE&&hD&&hP) return eV*ev.exam+dV*ev.td+pV*ev.tp;
+    if (hE&&hD)     return eV*ev.exam+dV*ev.td;
+    if (hE&&hP)     return eV*ev.exam+pV*ev.tp;
+    return null;
+  }
+  if (ev.tp && !ev.td && !ev.cc) return (hE&&hP) ? eV*ev.exam+pV*ev.tp : null;
+  return null;
+}
+
+function calcSemAvg(sp, id) {
+  const sem = SPECS[sp].semesters.find(s => s.id===id);
+  if (!sem) return null;
+  if (sem.isPFE) { const v=parseFloat(grades[sp][id]['__pfe__']?.exam); return isNaN(v)?null:v; }
+  let tw=0, tc=0;
+  for (const g of sem.groups) for (const s of g.subjects) {
+    const gd = grades[sp][id][s.en] || {};
+    const gr = calcSub(s, gd);
+    if (gr !== null) { tw += gr*s.coeff; tc += s.coeff; }
+  }
+  return tc>0 ? tw/tc : null;
+}
+
+function calcOverall(sp) {
+  let sum=0, cnt=0;
+  for (const sem of SPECS[sp].semesters) { const a=calcSemAvg(sp,sem.id); if(a!==null){sum+=a;cnt++;} }
+  return cnt>0 ? sum/cnt : null;
+}
+
+function getMention(avg) {
+  const m = LANG[currentLang].mention;
+  if (avg===null) return null;
+  if (avg>=16) return {text:m.pass, color:'#854d0e', bg:'#fef9c3', border:'#fde047'};
+  if (avg>=14) return {text:m.vg,   color:'#14532d', bg:'#dcfce7', border:'#86efac'};
+  if (avg>=12) return {text:m.good, color:'#1e3a5f', bg:'#dbeafe', border:'#93c5fd'};
+  if (avg>=10) return {text:m.avg,  color:'#4c1d95', bg:'#ede9fe', border:'#c4b5fd'};
+  return {text:m.fail, color:'#7f1d1d', bg:'#fee2e2', border:'#fca5a5'};
+}
+
+function gClass(v) { return v===null?'g-none':v>=10?'g-pass':v>=8?'g-warn':'g-fail'; }
+function gColor(v) {
+  return v===null?'var(--muted)':v>=10?'var(--success)':v>=8?'var(--warn)':'var(--danger)';
+}
+
+// ══════════════════════════════════════════
+// RENDERING
+// ══════════════════════════════════════════
+function sName(s) { return s.en; }
+function gName(g) { return g.name.en || g.name.ar || '' ; }
+function semTitle(id) { return LANG[currentLang].sem_labels[id-1]||'S'+id; }
+
+function switchSpec(sp) {
+  currentSpec=sp; currentSem=1;
+  document.querySelectorAll('.spec-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelector('.tab-'+sp).classList.add('active');
+  renderAll();
+}
+function selectSem(id) { currentSem=id; renderAll(); }
+function renderAll() { renderNav(); renderContent(); renderResults(); }
+
+function renderNav() {
+  document.getElementById('semNav').innerHTML = SPECS[currentSpec].semesters.map(sem => {
+    const avg = calcSemAvg(currentSpec, sem.id);
+    const ac  = sem.id===currentSem ? `act-${currentSpec}` : '';
+    const hg  = avg!==null ? 'has-grade' : '';
+    return `<button class="sem-btn ${ac} ${hg}" onclick="selectSem(${sem.id})">
+      <span class="dot"></span>
+      S${sem.id}${avg!==null?`<br><span style="font-size:0.6rem">${avg.toFixed(2)}</span>`:''}
+    </button>`;
+  }).join('');
+}
+
+function buildInputs(s, gd, sp, semId) {
+  const ev = s.eval, t = LANG[currentLang], key = s.en;
+  const esc = key.replace(/`/g,'\\`').replace(/'/g,"\\'");
+  let h = '';
+  const mk = (type, lbl, pct) => {
+    const val = gd[type] || '';
+    const pStr = pct<100 ? ` ${pct}%` : '';
+    return `<div class="inp-wrap wrap-${type}">
+      <label class="lbl-${type}">${lbl}${pStr}</label>
+      <input type="number" min="0" max="20" step="0.25"
+        class="grade-input${val!==''?' has-val':''}"
+        value="${val}" placeholder="—"
+        oninput="onInput('${sp}',${semId},'${esc}','${type}',this)">
+    </div>`;
+  };
+  if (ev.exam>0)              h += mk('exam', t.exam,  Math.round(ev.exam*100));
+  if (ev.cc  !== undefined)   h += mk('cc',   t.cc,    Math.round(ev.cc*100));
+  if (ev.td  !== undefined)   h += mk('td',   t.td,    Math.round(ev.td*100));
+  if (ev.tp  !== undefined)   h += mk('tp',   t.tp,    Math.round(ev.tp*100));
+  return h;
+}
+
+function fmtFormula(ev) {
+  if (ev.exam===1.0 && !ev.cc && !ev.td && !ev.tp) return '';
+  const p = [];
+  if (ev.exam<1) p.push(`E×${Math.round(ev.exam*100)}%`);
+  if (ev.cc)     p.push(`CC×${Math.round(ev.cc*100)}%`);
+  if (ev.td)     p.push(`TD×${Math.round(ev.td*100)}%`);
+  if (ev.tp)     p.push(`TP×${Math.round(ev.tp*100)}%`);
+  return `<span class="formula-tag">${p.join('+')}</span>`;
+}
+
+function renderContent() {
+  const sp = currentSpec, t = LANG[currentLang];
+  const sem = SPECS[sp].semesters.find(s => s.id===currentSem);
+  const avg = calcSemAvg(sp, currentSem);
+  const aDisp = avg!==null ? avg.toFixed(2) : '—';
+  const aCol  = gColor(avg);
+  const colClass = sp==='er' ? 'er-col' : 'gh-col';
+
+  if (sem.isPFE) {
+    const pv = grades[sp][currentSem]['__pfe__']?.exam || '';
+    document.getElementById('semContent').innerHTML = `
+    <div class="sem-card">
+      <div class="sem-header">
+        <div class="sem-num ${colClass}">${currentSem}</div>
+        <div class="sem-info"><h3>${semTitle(currentSem)}</h3><p>${t.pfe_title}</p></div>
+        <div class="sem-avg">
+          <div class="sem-avg-val" style="color:${aCol}">${aDisp}</div>
+          <div class="sem-avg-lbl">${t['avg-label']}</div>
+        </div>
+      </div>
+      <div class="pfe-wrap">
+        <div class="pfe-inner">
+          <div class="pfe-t">🎓 PFE — ${t.pfe_title}</div>
+          <div class="pfe-row">
+            <label>${t['pfe-label']}</label>
+            <div class="inp-wrap wrap-exam">
+              <label class="lbl-exam">${t.exam}</label>
+              <input type="number" min="0" max="20" step="0.25"
+                class="grade-input${pv!==''?' has-val':''}"
+                value="${pv}" placeholder="—"
+                oninput="onInput('${sp}',${currentSem},'__pfe__','exam',this)">
+            </div>
+          </div>
+          <div class="pfe-note">${t['coeff-label']}: ${sem.pfeCoeff}</div>
+        </div>
+      </div>
+    </div>`;
+    return;
+  }
+
+  const total = sem.groups.reduce((a,g) => a+g.subjects.length, 0);
+  let gHTML = '';
+    for (const grp of sem.groups) {
+    let sHTML = '';
+    for (const s of grp.subjects) {
+      const gd = grades[sp][currentSem][s.en] || {};
+      const gr = calcSub(s, gd);
+      sHTML += `<div class="sub-row">
+        <div class="sub-name">${sName(s)}</div>
+        <div class="coeff-tag">×${s.coeff}</div>
+        ${buildInputs(s, gd, sp, currentSem)}
+        ${fmtFormula(s.eval)}
+        <div class="calc-res ${gClass(gr)}">${gr!==null?gr.toFixed(2):'—'}</div>
+      </div>`;
+    }
+    gHTML += `<div class="ue-group"><div class="ue-title">${gName(grp)}</div>${sHTML}</div>`;
+  }
+
+  document.getElementById('semContent').innerHTML = `
+    <div class="sem-card">
+      <div class="sem-header">
+        <div class="sem-num ${colClass}">${currentSem}</div>
+        <div class="sem-info"><h3>${semTitle(currentSem)}</h3><p>${total} ${t['sub-count']}</p></div>
+        <div class="sem-avg">
+          <div class="sem-avg-val" id="liveAvg" style="color:${aCol}">${aDisp}</div>
+          <div class="sem-avg-lbl">${t['avg-label']}</div>
+        </div>
+      </div>
+      ${gHTML}
+      <div style="height:0.8rem"></div>
+    </div>`;
+}
+
+function renderResults() {
+  const t = LANG[currentLang];
+  document.getElementById('semResList').innerHTML = SPECS[currentSpec].semesters.map(sem => {
+    const avg = calcSemAvg(currentSpec, sem.id);
+    const ac  = sem.id===currentSem ? 'active-row' : '';
+    return `<div class="sem-res-row ${ac}" onclick="selectSem(${sem.id})">
+      <span class="srl-label">${semTitle(sem.id)}${sem.isPFE?' 🎓':''}</span>
+      <span class="srl-val" style="color:${gColor(avg)}">${avg!==null?avg.toFixed(2):'—'}</span>
+    </div>`;
+  }).join('');
+
+  const ov = calcOverall(currentSpec), men = getMention(ov);
+  document.getElementById('overallAvg').textContent = ov!==null ? ov.toFixed(2) : '—';
+  document.getElementById('overallAvg').style.color = ov!==null ? gColor(ov) : 'var(--text)';
+  document.getElementById('overallMention').innerHTML = men
+    ? `<span class="mention-badge" style="color:${men.color};background:${men.bg};border:1.5px solid ${men.border}">${men.text}</span>` : '';
+
+  // ring
+  const ca = calcSemAvg(currentSpec, currentSem);
+  const rv = document.getElementById('ringVal'), circ = document.getElementById('progressCircle');
+  if (ca !== null) {
+    rv.textContent = ca.toFixed(1);
+    const col = gColor(ca);
+    circ.style.strokeDashoffset = 263.89 * (1 - Math.min(ca/20,1));
+    circ.style.stroke = col;
+    rv.style.color = col;
+  } else {
+    rv.textContent = '—';
+    circ.style.strokeDashoffset = 263.89;
+    circ.style.stroke = 'var(--er)';
+    rv.style.color = 'var(--muted2)';
+  }
+}
+
+// ══════════════════════════════════════════
+// INTERACTIONS
+// ══════════════════════════════════════════
+function onInput(sp, semId, key, type, inp) {
+  const val = inp.value, num = parseFloat(val);
+  const bad = val!=='' && (isNaN(num)||num<0||num>20);
+  inp.classList.toggle('invalid-val', bad);
+  inp.classList.toggle('has-val', !bad && val!=='');
+  if (!grades[sp][semId]) grades[sp][semId] = {};
+  if (!grades[sp][semId][key]) grades[sp][semId][key] = {};
+  grades[sp][semId][key][type] = val;
+  // update row calc inline
+  const row = inp.closest('.sub-row');
+  if (row && key!=='__pfe__') {
+    const sem = SPECS[sp].semesters.find(s=>s.id===semId);
+    let subj = null;
+    for (const g of sem.groups||[]) { subj=g.subjects.find(s=>s.en===key); if(subj) break; }
+    if (subj) {
+      const gr = calcSub(subj, grades[sp][semId][key]);
+      const ce = row.querySelector('.calc-res');
+      if (ce) { ce.textContent=gr!==null?gr.toFixed(2):'—'; ce.className='calc-res '+gClass(gr); }
+    }
+  }
+  // update header avg
+  const avg = calcSemAvg(sp, semId);
+  const ae = document.getElementById('liveAvg');
+  if (ae) { ae.textContent=avg!==null?avg.toFixed(2):'—'; ae.style.color=gColor(avg); }
+  renderResults();
+  renderNav();
+}
+
+function recalcAll() { renderAll(); }
+function clearAll() {
+  if (!confirm(LANG[currentLang].confirm_clear)) return;
+  for (const sem of SPECS[currentSpec].semesters) {
+    grades[currentSpec][sem.id] = {};
+    if (sem.isPFE) { grades[currentSpec][sem.id]['__pfe__']={exam:''}; continue; }
+    for (const g of sem.groups) for (const s of g.subjects) {
+        const e={exam:''};
+        if(s.eval.cc!==undefined)e.cc='';
+        if(s.eval.td!==undefined)e.td='';
+        if(s.eval.tp!==undefined)e.tp='';
+        grades[currentSpec][sem.id][s.en]=e;
+      }
+  }
+  renderAll();
+}
+
+cleanupLanguages();
+initGrades();
+setLang('en');
+</script>
+</body>
+</html>
